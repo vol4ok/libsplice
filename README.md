@@ -22,18 +22,6 @@ If the function fails, the return value is zero.
 Example
 -------
 
-<<<<<<< HEAD
-
-`typedef HANDLE (WINAPI *CREATE_FILE) (
-	LPCTSTR lpFileName,
-	DWORD dwDesiredAccess,
-	DWORD dwShareMode,
-	LPSECURITY_ATTRIBUTES lpSecurityAttributes,
-	DWORD dwCreationDisposition,
-	DWORD dwFlagsAndAttributes,
-	HANDLE hTemplateFile
-	);
-=======
 `
 	typedef HANDLE (WINAPI *CREATE_FILE) (
 		LPCTSTR lpFileName,
@@ -44,7 +32,6 @@ Example
 		DWORD dwFlagsAndAttributes,
 		HANDLE hTemplateFile
 		);
->>>>>>> README update
 
 	static CREATE_FILE oldCreateFile = NULL;
 
@@ -78,11 +65,6 @@ Example
 		if (!createFile)
 			return;
 
-<<<<<<< HEAD
-	splice(createFile, &newCreateFile, ppv(&oldCreateFile);
-}`
-=======
 		splice(createFile, &newCreateFile, ppv(&oldCreateFile);
 	}
 `
->>>>>>> README update
