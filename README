@@ -5,7 +5,7 @@ Library for kernel and user mode splicing for Windows (x86 and x64)
 Description
 --------
 Disassembles and moves the first instructions of procedure and transfers them in a separate buffer. Replaces the first byte of the procedure on a long jump to the target procedure. 
-32-bit splicing replaces the 5 bytes of proc, 64-bit replaces 14 bytes.
+32-bit splicing replaces at least the 5 bytes of proc, 64-bit replaces 14 bytes.
 
 Syntax
 ------
