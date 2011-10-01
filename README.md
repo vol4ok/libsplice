@@ -22,6 +22,7 @@ If the function fails, the return value is zero.
 Example
 -------
 
+<<<<<<< HEAD
 
 `typedef HANDLE (WINAPI *CREATE_FILE) (
 	LPCTSTR lpFileName,
@@ -32,38 +33,56 @@ Example
 	DWORD dwFlagsAndAttributes,
 	HANDLE hTemplateFile
 	);
-
-static CREATE_FILE oldCreateFile = NULL;
-
-HANDLE WINAPI newCreateFile(
-	LPCTSTR lpFileName,
-	DWORD dwDesiredAccess,
-	DWORD dwShareMode,
-	LPSECURITY_ATTRIBUTES lpSecurityAttributes,
-	DWORD dwCreationDisposition,
-	DWORD dwFlagsAndAttributes,
-	HANDLE hTemplateFile
-	)
-{
-	printf("CreateFile\n");
-	return oldCreateFile(
-		lpFileName,
-		dwDesiredAccess,
-		dwShareMode,
-		lpSecurityAttributes,
-		dwCreationDisposition,
-		dwFlagsAndAttributes,
-		hTemplateFile
+=======
+`
+	typedef HANDLE (WINAPI *CREATE_FILE) (
+		LPCTSTR lpFileName,
+		DWORD dwDesiredAccess,
+		DWORD dwShareMode,
+		LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+		DWORD dwCreationDisposition,
+		DWORD dwFlagsAndAttributes,
+		HANDLE hTemplateFile
 		);
-}
+>>>>>>> README update
 
-void example()
-{
-	PVOID	createFile = NULL;
+	static CREATE_FILE oldCreateFile = NULL;
 
-	createFile = GetProcAddress(LoadLibrary("kernel32.dll"),"CreateFileA");
-	if (!createFile)
-		return;
+	HANDLE WINAPI newCreateFile(
+		LPCTSTR lpFileName,
+		DWORD dwDesiredAccess,
+		DWORD dwShareMode,
+		LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+		DWORD dwCreationDisposition,
+		DWORD dwFlagsAndAttributes,
+		HANDLE hTemplateFile
+		)
+	{
+		printf("CreateFile\n");
+		return oldCreateFile(
+			lpFileName,
+			dwDesiredAccess,
+			dwShareMode,
+			lpSecurityAttributes,
+			dwCreationDisposition,
+			dwFlagsAndAttributes,
+			hTemplateFile
+			);
+	}
 
+	void example()
+	{
+		PVOID	createFile = NULL;
+
+		createFile = GetProcAddress(LoadLibrary("kernel32.dll"),"CreateFileA");
+		if (!createFile)
+			return;
+
+<<<<<<< HEAD
 	splice(createFile, &newCreateFile, ppv(&oldCreateFile);
 }`
+=======
+		splice(createFile, &newCreateFile, ppv(&oldCreateFile);
+	}
+`
+>>>>>>> README update
