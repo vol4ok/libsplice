@@ -20,6 +20,7 @@
  */
 
 #include "misc.h"
+#include "extdef.h"
 
 static u32 locked;
 static u32 inp_dpcs;
@@ -102,4 +103,38 @@ void mem_close(u64 cr0)
 {
 	__writecr0(cr0);
 	_enable();
+}
+
+void* get_kernel_base()
+{
+	PRTL_PROCESS_MODULES info;
+	NTSTATUS             status;
+	u32                  req_len;
+	void*                base;
+
+	info = NULL;
+	base = NULL;
+
+	dbg_msg("size of handle %u\n", sizeof(HANDLE));
+
+	do {
+		status = ZwQuerySystemInformation(SystemModuleInformation, NULL, 0, &req_len);
+		if (status != STATUS_INFO_LENGTH_MISMATCH)
+			break;
+
+		info = mem_alloc(req_len);
+		if (!info)
+			break;
+
+		status = ZwQuerySystemInformation(SystemModuleInformation, info, req_len, NULL);
+		if (!NT_SUCCESS(status))
+			break;
+
+		base = info->Modules[0].ImageBase;
+	} while (0);
+
+	if (info)
+		mem_free(info);
+
+	return base;
 }

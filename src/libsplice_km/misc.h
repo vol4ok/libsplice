@@ -10,4 +10,6 @@ void global_unlock(KIRQL old_irql);
 u64 mem_open();
 void mem_close(u64 cr0);
 
+void* get_kernel_base();
+
 #endif /* _MSIC_ */

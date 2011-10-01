@@ -19,12 +19,15 @@
  
  */
 
-#include <wdm.h>
+//#include <wdm.h>
+#include <ntifs.h>
 #include "defines.h"
 #include "splice.h"
+#include "misc.h"
 
 #define	DRIVER_NAME			L"example"
 #define IOCTL_TEST			CTL_CODE( FILE_DEVICE_UNKNOWN, 0x800, METHOD_BUFFERED, FILE_ANY_ACCESS )
+#define IOCTL_TEST1			CTL_CODE( FILE_DEVICE_UNKNOWN, 0x801, METHOD_BUFFERED, FILE_ANY_ACCESS )
 
 typedef  NTSTATUS (*NT_CREATE_FILE)(
 	__out     PHANDLE FileHandle,
@@ -40,7 +43,18 @@ typedef  NTSTATUS (*NT_CREATE_FILE)(
 	__in      ULONG EaLength
 	);
 
+typedef VOID (*KI_DISPATCH_EXCEPTION)(
+	__in PEXCEPTION_RECORD ExceptionRecord,
+	__in PKEXCEPTION_FRAME ExceptionFrame,
+	__in PKTRAP_FRAME      TrapFrame,
+	__in KPROCESSOR_MODE   PreviousMode,
+	__in BOOLEAN           FirstChance
+	);
+
 static NT_CREATE_FILE oldNtCreateFile = NULL;
+static KI_DISPATCH_EXCEPTION oldKiDispatchException = NULL;
+
+static ULONG g_exception_counter = 0;
 
 NTSTATUS newNtCreateFile(
 	__out     PHANDLE FileHandle,
@@ -72,7 +86,24 @@ NTSTATUS newNtCreateFile(
 		);
 }
 
-NTSTATUS test()
+VOID newKiDispatchException(
+	__in PEXCEPTION_RECORD ExceptionRecord,
+	__in PKEXCEPTION_FRAME ExceptionFrame,
+	__in PKTRAP_FRAME      TrapFrame,
+	__in KPROCESSOR_MODE   PreviousMode,
+	__in BOOLEAN           FirstChance
+	)
+{
+	g_exception_counter++;
+	oldKiDispatchException(
+		ExceptionRecord,
+		ExceptionFrame,
+		TrapFrame,
+		PreviousMode,
+		FirstChance);
+}
+
+NTSTATUS test0()
 {
 	PVOID	ntCreateFile = NULL;
 	UNICODE_STRING	ntCreateFileName;
@@ -94,6 +125,35 @@ NTSTATUS test()
 	}
 }
 
+NTSTATUS test()
+{
+	ULONG64 offset = 0xac080;
+	CHAR* ntbase = NULL;
+	PVOID kiDisptachException = NULL;
+
+	ntbase = get_kernel_base();
+	kiDisptachException = &ntbase[offset];
+
+	dbg_msg("nt kernel base = %p; offset = %u\n", ntbase, offset);
+	dbg_msg("kiDisptachException = %p\n", kiDisptachException);
+
+	//return STATUS_SUCCESS;
+
+	if (splice(kiDisptachException, &newKiDispatchException, ppv(&oldKiDispatchException))) {
+		dbg_msg("KiDispatchException successfully spliced!\n");
+		return STATUS_SUCCESS;
+	} else {
+		dbg_msg("Failed to splice KiDispatchException!\n");
+		return STATUS_UNSUCCESSFUL;
+	}
+}
+
+NTSTATUS test1()
+{
+	dbg_msg("exception_counter = %u\n", g_exception_counter);
+	return STATUS_SUCCESS;
+}
+
 NTSTATUS
 DispatchDeviceControl(
     __in PDEVICE_OBJECT DeviceObject,
@@ -112,6 +172,10 @@ DispatchDeviceControl(
     switch ( irpSp->Parameters.DeviceIoControl.IoControlCode ) {
     case IOCTL_TEST:
 		ntStatus = test();
+		Irp->IoStatus.Information = 0;
+		break;
+	case IOCTL_TEST1:
+		ntStatus = test1();
 		Irp->IoStatus.Information = 0;
 		break;
     default:

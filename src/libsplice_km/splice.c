@@ -25,7 +25,7 @@
 
 #define SPLICE32_SIZE			5
 #define SPLICE64_SIZE			14
-#define OLD_CODE_BUFFER_SIZE	48
+#define OLD_CODE_BUFFER_SIZE	64
 
 #define set_jump32(_src,_dst) p8(_src)[0] = 0xE9; p32((_src)+1)[0] = (u32)(_dst) - (u32)(_src) - 5
 #define set_jump64(_src,_dst) p64(_src)[0] = 0x25FF; p64((_src)+6)[0] = (u64)(_dst)
@@ -38,7 +38,7 @@ int splice(void *proc, void *new_proc, void **old_proc)
 	u32			all_len = 0;
 	ldasm_data	ld;
 	u64			cr0;
-	KIRQL		irql; 
+	KIRQL		irql;
 
 	/* dummy check */
 	if (!proc || !new_proc || !old_proc)
@@ -46,6 +46,7 @@ int splice(void *proc, void *new_proc, void **old_proc)
 
 	/* alloc buffer for original code */
 	*old_proc = mem_alloc(OLD_CODE_BUFFER_SIZE);
+
 	if (!*old_proc) {
 		dbg_msg("ERROR: mem_alloc failed!\n");
 		return FALSE;
