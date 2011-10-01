@@ -11,8 +11,8 @@ Syntax
 ------
 `int splice(void *proc, void *new_proc, void **old_proc);`
 
-Parameters
-----------
+### Parameters
+
 - *proc* – address of procedure for splicing
 - *new_proc* — address of new procedure
 - *old_proc* — pointer to variable, to store address of old procedure
