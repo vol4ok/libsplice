@@ -1,0 +1,9 @@
+.DS_Store
+bin/Debug_x64/*
+bin/Debug_x86/*
+bin/Release_x64/*
+bin/Release_x86/*
+*.user
+*.suo
+*.user
+*.ncb
