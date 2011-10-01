@@ -63,5 +63,5 @@ Example
 		if (!createFile)
 			return;
 
-		splice(createFile, &newCreateFile, ppv(&oldCreateFile);
+		splice(createFile, &newCreateFile, (void**)(&oldCreateFile);
 	}
