@@ -21,8 +21,6 @@ If the function fails, the return value is zero.
 
 Example
 -------
-
-`
 	typedef HANDLE (WINAPI *CREATE_FILE) (
 		LPCTSTR lpFileName,
 		DWORD dwDesiredAccess,
@@ -67,4 +65,3 @@ Example
 
 		splice(createFile, &newCreateFile, ppv(&oldCreateFile);
 	}
-`
