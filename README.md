@@ -3,9 +3,18 @@ libsplice
 Library for kernel and user mode splicing for Windows (x86 and x64)
 
 Description
---------
+-----------
 Disassembles and moves the first instructions of procedure and transfers them in a separate buffer. Replaces the first byte of the procedure on a long jump to the target procedure. 
 32-bit splicing replaces at least the 5 bytes of proc, 64-bit replaces 14 bytes.
+
+Features
+--------
+- Support for x86 and x64 mode
+- Support and user and kernel mode splicing
+- Transfer instructions with respect to the transition to a distance of up to 2GB
+- Support for re-splicing
+- checks for "int3" and "ret" instruction the intercepted code
+- lightweight and written in pure C
 
 Syntax
 ------
@@ -65,3 +74,7 @@ Example
 
 		splice(createFile, &newCreateFile, (void**)&oldCreateFile;
 	}
+	
+Licence
+-------
+libsplice is released under the GPL3 license.
