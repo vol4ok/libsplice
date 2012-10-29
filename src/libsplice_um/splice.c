@@ -89,19 +89,11 @@ int splice(void *proc, void *new_proc, void **old_proc)
 
 		/* if instruction has relative offset, calculate new offset */
 		if (ld.flags & F_RELATIVE) {
-			if (ld.opcd_size == 2) {
-				if ( _abs64((u64)(src + *((s32*)(old+1))) - (u64)old) > INT_MAX )
-				/* if jump greater then 2GB offset exit */
-					break;
-				else
-					p32(old+2)[0] += (u32)(src - old);
-			} else {
-				if ( _abs64((u64)(src + *((s32*)(old+1))) - (u64)old) > INT_MAX )
-				/* if jump greater then 2GB offset exit */
-					break;
-				else
-					p32(old+1)[0] += (u32)(src - old);
-			}
+			if ( _abs64((u64)(src + *((s32*)(old+ld.disp_offset))) - (u64)old) > INT_MAX )
+			/* if jump greater then 2GB offset exit */
+				break;
+			else
+				p32(old+ld.disp_offset)[0] += (u32)(src - old);
 		}
 
 		src += len;
@@ -172,13 +164,8 @@ int splice(void *proc, void *new_proc, void **old_proc)
 		memcpy(old, src, len);
 
 		/* if instruction has relative offset, calculate new offset */
-		if (ld.flags & F_RELATIVE) {
-			if (ld.opcd_size == 2) {
-				p32(old+2)[0] += (u32)(src - old);
-			} else {
-				p32(old+1)[0] += (u32)(src - old);
-			}
-		}
+		if (ld.flags & F_RELATIVE)
+			p32(old+ld.disp_offset)[0] += (u32)(src - old);
 
 		src += len;
 		old += len;
